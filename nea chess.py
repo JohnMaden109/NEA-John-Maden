@@ -277,6 +277,9 @@ class Queen(Piece):
 class King(Piece):
     def __init__(self, colour, row, column):
         super().__init__(colour, row, column)
+        self.moved = False
+        self.g = Game()
+        self.castle = False
 
         if colour == 'white':
             self.icon = '♚'
@@ -286,24 +289,25 @@ class King(Piece):
     def legalmove(self, newrow, newcolumn, grid):
         valid = False
 
-        if newrow in (self.row + 1, self.row - 1) and newcolumn == self.column:
-            valid = True
+        if self.castle == False:
+            if newrow in (self.row + 1, self.row - 1) and newcolumn == self.column:
+                valid = True
 
-        elif newrow == self.row and newcolumn in (self.column + 1, self.column - 1):
-            valid = True
+            elif newrow == self.row and newcolumn in (self.column + 1, self.column - 1):
+                valid = True
 
-        elif newrow in (self.row + 1, self.row - 1) and newcolumn in (self.column + 1, self.column - 1):
-            valid = True
+            elif newrow in (self.row + 1, self.row - 1) and newcolumn in (self.column + 1, self.column - 1):
+                valid = True
 
-        if not valid:
-            print('Invalid move..')
-            return False
-
-        target = grid[newrow][newcolumn]
-        if target != ' ':
-            if target.colour == self.colour:
-                print('You cannot capture your own piece.')
+            if not valid:
+                print('Invalid move..')
                 return False
+
+            target = grid[newrow][newcolumn]
+            if target != ' ':
+                if target.colour == self.colour:
+                    print('You cannot capture your own piece.')
+                    return False
 
         return True
 
@@ -364,8 +368,6 @@ class Board:
         blackking = King('black',0,4)
         self.grid[0][4] = blackking 
 
-            
-
     def movepiece(self, startrow, startcolumn, newrow, newcolumn): # Moves the piece to the allocated position depending on whether or not the move you're trying to do is legal or not.
         piece = self.grid[startrow][startcolumn]
         captured = False
@@ -408,8 +410,7 @@ class Board:
 
     def displayboard(self):
 
-        letters = ['A','B','C','D','E','F','G','H']
-        xnums = ('  '+'   '.join(str(i)for i in letters))
+        xnums = ('  '+'   '.join(str(i)for i in range(BOARD_SIZE)))
         print(xnums)
 
         num = 1
@@ -435,6 +436,14 @@ class Game:
 
         self.whitecaptured = []
         self.blackcaptured = []
+
+        self.white_kingside = True
+        self.white_queenside = True
+        self.black_kingside = True
+        self.black_queenside = True
+
+    def get_castlingrights(self):
+        return self.white_queenside, self.white_kingside, self.black_queenside, self.black_kingside
 
     def get_status(self):
         return self.run
@@ -476,7 +485,7 @@ class Game:
                 self.turn = 'white' 
             
         else:
-            print('it is not ur turn, it is ',self.turn,"'s turn")
+            print('it is not your turn, it is ',self.turn,"'s turn")
             return False
 
 def main():
@@ -487,10 +496,8 @@ def main():
     timeblack = game.timeblack
     timewhite = game.timewhite
 
-    letters = ['A','B','C','D','E','F','G','H']
 
     while game.timewhite > 0 and game.timeblack > 0 and game.run == True:
-        count = 0
         wmins = timewhite // 60
         wsecs = timewhite % 60
             
@@ -513,21 +520,11 @@ def main():
             game.board.displayboard()
             print('it is',game.turn,"'s turn.")
 
-            startcolumn = str(input('ENTER START COLUMN: ')).upper
-            
-            for i in letters:
-                if startcolumn == i:
-                    startcolumn = count
-                count += 1
+            startcolumn = int(input('ENTER START COLUMN: ')) - 1
 
             startrow = int(input('ENTER START ROW: ')) - 1
 
-            newcolumn = str(input('ENTER START COLUMN: ')).upper()
-            count = 0
-            for i in letters:
-                if newcolumn == i:
-                    newcolumn = count
-                count += 1
+            newcolumn = int(input('ENTER START COLUMN: ')) - 1
 
             newrow = int(input('ENTER NEW ROW: ')) - 1
 
@@ -542,7 +539,7 @@ def main():
                 timeblack -= difference
             game.checkturn(startrow, startcolumn, newrow, newcolumn)
 
-        except(ValueError):
+        except(ValueError, TypeError):
             print('INVALID INPUT.')
             continue
 
