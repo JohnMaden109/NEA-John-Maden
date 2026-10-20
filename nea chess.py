@@ -2,7 +2,6 @@ import time
 
 BOARD_SIZE = 8 # constant which shows the size of the grid.
 
-
 class Piece:
     def __init__(self, colour, row, column):
         self.colour = colour
@@ -363,7 +362,11 @@ class Board:
                 self.grid[0][i] = blackbishop
 
         blackqueen = Queen('black',0,3)
-        self.grid[0][3] = blackqueen    
+        self.grid[0][3] = blackqueen
+
+        for i in range(BOARD_SIZE):
+            blackqueen = Queen('black',0,3)
+            self.grid[0][i] = blackqueen    
 
         blackking = King('black',0,4)
         self.grid[0][4] = blackking 
@@ -410,7 +413,7 @@ class Board:
 
     def displayboard(self):
 
-        xnums = ('  '+'   '.join(str(i)for i in range(BOARD_SIZE)))
+        xnums = ('  '+'   '.join(str(i+1)for i in range(BOARD_SIZE)))
         print(xnums)
 
         num = 1
@@ -519,14 +522,13 @@ def main():
             start = time.time()
             game.board.displayboard()
             print('it is',game.turn,"'s turn.")
+            startrow = int(input('ENTER START ROW: ')) - 1
 
             startcolumn = int(input('ENTER START COLUMN: ')) - 1
 
-            startrow = int(input('ENTER START ROW: ')) - 1
+            newrow = int(input('ENTER NEW ROW: ')) - 1
 
             newcolumn = int(input('ENTER START COLUMN: ')) - 1
-
-            newrow = int(input('ENTER NEW ROW: ')) - 1
 
             print('\n')
 
