@@ -362,11 +362,7 @@ class Board:
                 self.grid[0][i] = blackbishop
 
         blackqueen = Queen('black',0,3)
-        self.grid[0][3] = blackqueen
-
-        for i in range(BOARD_SIZE):
-            blackqueen = Queen('black',0,3)
-            self.grid[0][i] = blackqueen    
+        self.grid[0][3] = blackqueen    
 
         blackking = King('black',0,4)
         self.grid[0][4] = blackking 
@@ -531,18 +527,15 @@ def main():
             newcolumn = int(input('ENTER START COLUMN: ')) - 1
 
             print('\n')
-
-            end = time.time()
-            difference = round((end - start),0)
-
-            if game.turn == 'white':
-                timewhite -= difference
-            else:
-                timeblack -= difference
             game.checkturn(startrow, startcolumn, newrow, newcolumn)
-
         except(ValueError, TypeError):
             print('INVALID INPUT.')
-            continue
 
-main()
+        end = time.time()
+        difference = round((end - start),0)
+        if game.turn == 'white':
+            timewhite -= difference
+        else:
+            timeblack -= difference
+        
+main()  
