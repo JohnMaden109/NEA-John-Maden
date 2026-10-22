@@ -454,8 +454,12 @@ class Game:
             self.run = True
         return self.run
 
-    def checkturn(self, startrow, startcolumn, newrow, newcolumn): # Checks whether the turn will work or not
-        piece = self.board.grid[startrow][startcolumn]
+    def checkturn(self, startrow, startcolumn, newrow, newcolumn):
+        try: # Checks whether the turn will work or not
+            piece = self.board.grid[startrow][startcolumn]
+        except IndexError:
+            print('Invalid Input.')
+            return False
 
         if piece != ' ' and piece.colour == self.turn:
 
